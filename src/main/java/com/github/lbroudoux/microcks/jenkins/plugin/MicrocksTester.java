@@ -18,12 +18,48 @@
  */
 package com.github.lbroudoux.microcks.jenkins.plugin;
 
+import com.github.lbroudoux.microcks.jenkins.plugin.model.IMicrocksTester;
+import com.github.lbroudoux.microcks.jenkins.plugin.model.RunnerType;
+import hudson.Extension;
+import hudson.tasks.Builder;
+
 /**
  * @author laurent
  */
-public abstract class MicrocksTester extends TimedMicrocksBaseStep {
+public abstract class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTester {
 
-   protected MicrocksTester(String apiURL, String verbose, String waitTime, String waitUnit) {
+   protected final String serviceId;
+   protected final String testEndpoint;
+   protected final RunnerType runnerType;
+
+   protected MicrocksTester(String apiURL, String verbose, String serviceId, String testEndpoint, RunnerType runnerType, String waitTime, String waitUnit) {
       super(apiURL, verbose, waitTime, waitUnit);
+      this.serviceId = serviceId != null ? serviceId.trim() : null;
+      this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
+      this.runnerType = runnerType != null ? runnerType : RunnerType.HTTP;
+   }
+
+   @Override
+   public String getServiceId() {
+      return serviceId;
+   }
+
+   @Override
+   public String getTestEndpoint() {
+      return testEndpoint;
+   }
+
+   @Override
+   public RunnerType getRunnerType() {
+      return runnerType;
+   }
+
+   /**
+    * Descriptor for {@link MicrocksTester}. Used as a singleton.
+    * The class is marked as public so that it can be accessed from views.
+    */
+   @Extension // This indicates to Jenkins that this is an implementation of an extension point.
+   public static final class DescriptorImpl extends TimedBuildStepDescriptor<Builder> {
+
    }
 }
