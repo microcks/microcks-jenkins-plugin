@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.lbroudoux.microcks.jenkins.plugin;
+package com.github.lbroudoux.microcks.jenkins.plugin.dsl;
 
 import com.github.lbroudoux.microcks.jenkins.plugin.model.IMicrocksPlugin;
 import hudson.FilePath;
@@ -25,8 +25,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.Builder;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,24 +35,31 @@ import java.io.Serializable;
 /**
  * @author laurent
  */
-public abstract class MicrocksBaseStep extends Builder implements SimpleBuildStep, Serializable, IMicrocksPlugin {
+public abstract class MicrocksBaseStep extends AbstractStepImpl implements SimpleBuildStep, Serializable, IMicrocksPlugin {
 
-   protected final String apiURL;
-   protected final String verbose;
+   protected String apiURL;
+   protected String verbose;
 
-   protected MicrocksBaseStep(String apiURL, String verbose) {
-      this.apiURL = apiURL != null ? apiURL.trim() : null;
-      this.verbose = verbose != null ? verbose.trim() : null;
+   protected MicrocksBaseStep() {
    }
 
    public String getApiURL() {
       return apiURL;
    }
 
+   @DataBoundSetter
+   public void setApiURL(String apiURL) {
+      this.apiURL = apiURL != null ? apiURL.trim() : null;
+   }
+
    public String getVerbose() {
       return verbose;
    }
 
+   @DataBoundSetter
+   public void setVerbose(String verbose) {
+      this.verbose = verbose != null ? verbose.trim() : null;
+   }
 
    // this is the workflow plugin path
    @Override

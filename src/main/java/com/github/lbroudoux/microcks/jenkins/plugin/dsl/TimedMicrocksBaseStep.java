@@ -16,40 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.lbroudoux.microcks.jenkins.plugin.model;
+package com.github.lbroudoux.microcks.jenkins.plugin.dsl;
 
-import hudson.EnvVars;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import com.github.lbroudoux.microcks.jenkins.plugin.model.ITimedMicrocksPlugin;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * @author laurent
  */
-public interface IMicrocksTester extends ITimedMicrocksPlugin {
+public abstract class TimedMicrocksBaseStep extends MicrocksBaseStep implements ITimedMicrocksPlugin {
 
-   String DISPLAY_NAME = "Launch Microcks Test Runner";
+   protected String waitTime;
 
-   default String getDisplayName() {
-      return DISPLAY_NAME;
+   protected String waitUnit;
+
+   final public String getWaitTime() {
+      return waitTime;
    }
 
-   String getServiceId();
-
-   String getTestEndpoint();
-
-   String getRunnerType();
-
-   default long getGlobalTimeoutConfiguration() {
-      return GlobalConfig.getTestWait();
+   final public String getWaitUnit() {
+      return TimeoutUnit.normalize(waitUnit);
    }
 
-   default boolean doItCore(TaskListener listener, EnvVars env, Run<?, ?> run, AbstractBuild<?, ?> build, Launcher launcher) throws InterruptedException {
-      return true;
+   @DataBoundSetter
+   final public void setWaitTime(String waitTime) {
+      this.waitTime = waitTime != null ? waitTime.trim() : null;
    }
 
-   default void waitOnTest() {
-
+   @DataBoundSetter
+   final public void setWaitUnit(String waitUnit) {
+      this.waitUnit = waitUnit != null ? waitUnit.trim() : null;
    }
 }

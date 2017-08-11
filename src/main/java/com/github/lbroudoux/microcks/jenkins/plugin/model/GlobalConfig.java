@@ -18,38 +18,18 @@
  */
 package com.github.lbroudoux.microcks.jenkins.plugin.model;
 
-import hudson.EnvVars;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import com.github.lbroudoux.microcks.jenkins.plugin.MicrocksTester;
 
 /**
  * @author laurent
  */
-public interface IMicrocksTester extends ITimedMicrocksPlugin {
+public class GlobalConfig {
 
-   String DISPLAY_NAME = "Launch Microcks Test Runner";
+   private static final long SECOND = 1000;
 
-   default String getDisplayName() {
-      return DISPLAY_NAME;
-   }
+   public static final long DEFAULT_TEST_WAIT = 5 * SECOND;
 
-   String getServiceId();
-
-   String getTestEndpoint();
-
-   String getRunnerType();
-
-   default long getGlobalTimeoutConfiguration() {
-      return GlobalConfig.getTestWait();
-   }
-
-   default boolean doItCore(TaskListener listener, EnvVars env, Run<?, ?> run, AbstractBuild<?, ?> build, Launcher launcher) throws InterruptedException {
-      return true;
-   }
-
-   default void waitOnTest() {
-
+   public static long getTestWait() {
+      return new MicrocksTester.DescriptorImpl().getConfiguredDefaultWaitTime();
    }
 }

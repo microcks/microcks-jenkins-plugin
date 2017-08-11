@@ -18,6 +18,17 @@
  */
 package com.github.lbroudoux.microcks.jenkins.plugin.model;
 
+import hudson.AbortException;
+import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+
+import java.io.IOException;
+
 /**
  * @author laurent
  */
@@ -31,4 +42,34 @@ public interface IMicrocksPlugin {
    public static final String STATE_FAILED = "Failed";
 
    public String getApiURL();
+
+   public String getDisplayName();
+
+   boolean doItCore(TaskListener listener, EnvVars env, Run<?, ?> run, AbstractBuild<?, ?> build, Launcher launcher) throws InterruptedException;
+
+   default void doIt(Run<?, ?> run, FilePath workspace, Launcher launcher,
+                     TaskListener listener) throws InterruptedException, IOException {
+      boolean successful = this.doItCore(listener, null, run, null, launcher);
+      if (!successful)
+         throw new AbortException("\"" + getDisplayName() + "\" failed");
+   }
+
+   default boolean doIt(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+      boolean successful = this.doItCore(listener, null, null, build, launcher);
+      if (!successful)
+         throw new AbortException("\"" + getDisplayName() + "\" failed");
+      return successful;
+   }
+
+   default boolean isBuildRunning(String bldState) {
+      if (bldState != null && (bldState.equals(STATE_RUNNING)))
+         return true;
+      return false;
+   }
+
+   default boolean isBuildFinished(String bldState) {
+      if (bldState != null && (bldState.equals(STATE_COMPLETE) || bldState.equals(STATE_FAILED) || bldState.equals(STATE_ERROR) || bldState.equals(STATE_CANCELLED)))
+         return true;
+      return false;
+   }
 }

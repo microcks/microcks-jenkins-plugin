@@ -18,6 +18,7 @@
  */
 package com.github.lbroudoux.microcks.jenkins.plugin;
 
+import com.github.lbroudoux.microcks.jenkins.plugin.model.GlobalConfig;
 import com.github.lbroudoux.microcks.jenkins.plugin.model.IMicrocksTester;
 import com.github.lbroudoux.microcks.jenkins.plugin.model.RunnerType;
 import hudson.Extension;
@@ -26,17 +27,17 @@ import hudson.tasks.Builder;
 /**
  * @author laurent
  */
-public abstract class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTester {
+public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTester {
 
    protected final String serviceId;
    protected final String testEndpoint;
-   protected final RunnerType runnerType;
+   protected final String runnerType;
 
-   protected MicrocksTester(String apiURL, String verbose, String serviceId, String testEndpoint, RunnerType runnerType, String waitTime, String waitUnit) {
+   protected MicrocksTester(String apiURL, String verbose, String serviceId, String testEndpoint, String runnerType, String waitTime, String waitUnit) {
       super(apiURL, verbose, waitTime, waitUnit);
       this.serviceId = serviceId != null ? serviceId.trim() : null;
       this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
-      this.runnerType = runnerType != null ? runnerType : RunnerType.HTTP;
+      this.runnerType = runnerType != null ? runnerType.trim() : null;
    }
 
    @Override
@@ -50,7 +51,7 @@ public abstract class MicrocksTester extends TimedMicrocksBaseStep implements IM
    }
 
    @Override
-   public RunnerType getRunnerType() {
+   public String getRunnerType() {
       return runnerType;
    }
 
@@ -61,5 +62,9 @@ public abstract class MicrocksTester extends TimedMicrocksBaseStep implements IM
    @Extension // This indicates to Jenkins that this is an implementation of an extension point.
    public static final class DescriptorImpl extends TimedBuildStepDescriptor<Builder> {
 
+      @Override
+      protected long getStaticDefaultWaitTime() {
+         return GlobalConfig.DEFAULT_TEST_WAIT;
+      }
    }
 }
