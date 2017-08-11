@@ -13,7 +13,7 @@
   </parent>
 
   <groupId>com.github.lbroudoux.microcks</groupId>
-  <artifactId>jenkins-plugin</artifactId>
+  <artifactId>microcks-jenkins-plugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
