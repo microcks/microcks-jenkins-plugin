@@ -1,0 +1,14 @@
+FROM jenkins/jenkins:2.60.2-alpine
+RUN /usr/local/bin/install-plugins.sh workflow-aggregator:2.5 \
+    workflow-remote-loader:1.2 \
+    git:3.4.0 \
+    git-client:2.4.4 \
+    github-branch-source:2.0.8 \
+    job-dsl:1.60 \
+    parameterized-trigger:2.35.1 \
+    pipeline-build-step:2.5.1 \
+    pipeline-input-step:2.8 \
+    workflow-cps:2.39 \
+    script-security:1.31
+USER root
+COPY ./jpi /var/jenkins_home/plugins

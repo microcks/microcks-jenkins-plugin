@@ -20,6 +20,8 @@ package com.github.lbroudoux.microcks.jenkins.plugin;
 
 import com.github.lbroudoux.microcks.jenkins.plugin.dsl.MicrocksBaseStep;
 import com.github.lbroudoux.microcks.jenkins.plugin.dsl.TimedMicrocksBaseStep;
+import hudson.util.FormValidation;
+import org.kohsuke.stapler.QueryParameter;
 
 import java.util.Map;
 
@@ -27,6 +29,12 @@ import java.util.Map;
  * @author laurent
  */
 public class CommonParamsHelper {
+
+   public static FormValidation doCheckApiURL(@QueryParameter String value) {
+      if (value.length() == 0)
+         return FormValidation.warning("Unless you specify a value here, one of the default API endpoints will be used; see this field's help or https://github.com/openshift/jenkins-plugin#common-aspects-across-the-rest-based-functions-build-steps-scm-post-build-actions for details");
+      return FormValidation.ok();
+   }
 
    public static void updateDSLBaseStep(Map<String, Object> arguments, MicrocksBaseStep step) {
       if (arguments.containsKey("apiURL")) {

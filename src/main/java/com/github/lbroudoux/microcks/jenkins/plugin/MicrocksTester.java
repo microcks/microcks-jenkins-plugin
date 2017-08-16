@@ -20,7 +20,6 @@ package com.github.lbroudoux.microcks.jenkins.plugin;
 
 import com.github.lbroudoux.microcks.jenkins.plugin.model.GlobalConfig;
 import com.github.lbroudoux.microcks.jenkins.plugin.model.IMicrocksTester;
-import com.github.lbroudoux.microcks.jenkins.plugin.model.RunnerType;
 import hudson.Extension;
 import hudson.tasks.Builder;
 

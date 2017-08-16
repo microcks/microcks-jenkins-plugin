@@ -16,31 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.lbroudoux.microcks.jenkins.plugin.model;
+package com.github.lbroudoux.microcks.jenkins.plugin;
 
-import com.github.lbroudoux.microcks.jenkins.plugin.CommonParamsHelper;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
+ * Functionless stub class to establish a path to common
+ * *.jelly files (e.g. st:include page="cluster.jelly" class="com.github.lbroudoux.microcks.jenkins.plugin.Common" )
  * @author laurent
  */
-public interface IMicrocksPluginDescriptor {
+public class Common extends AbstractDescribableImpl<Common> {
 
-   default FormValidation doCheckApiURL(@QueryParameter String value)
-         throws IOException, ServletException {
-      return CommonParamsHelper.doCheckApiURL(value);
+   @DataBoundConstructor
+   public Common() {
    }
 
-   default ListBoxModel doFillWaitUnitItems() {
-      ListBoxModel items = new ListBoxModel();
-      items.add("Seconds", "sec");
-      items.add("Minutes", "min");
-      items.add("Milliseconds", "milli");
-      return items;
+   @Extension
+   public static class DescriptorImpl extends Descriptor<Common> {
+      public String getDisplayName() {
+         return "Common";
+      }
    }
 }
