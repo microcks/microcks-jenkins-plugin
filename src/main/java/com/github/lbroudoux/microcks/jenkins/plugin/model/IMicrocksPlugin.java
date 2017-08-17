@@ -43,6 +43,8 @@ public interface IMicrocksPlugin {
 
    public String getApiURL();
 
+   public String getVerbose();
+
    public String getDisplayName();
 
    boolean doItCore(TaskListener listener, EnvVars env, Run<?, ?> run, AbstractBuild<?, ?> build, Launcher launcher) throws InterruptedException;
@@ -61,14 +63,14 @@ public interface IMicrocksPlugin {
       return successful;
    }
 
-   default boolean isBuildRunning(String bldState) {
-      if (bldState != null && (bldState.equals(STATE_RUNNING)))
+   default boolean isTestRunning(String testState) {
+      if (testState != null && (testState.equals(STATE_RUNNING)))
          return true;
       return false;
    }
 
-   default boolean isBuildFinished(String bldState) {
-      if (bldState != null && (bldState.equals(STATE_COMPLETE) || bldState.equals(STATE_FAILED) || bldState.equals(STATE_ERROR) || bldState.equals(STATE_CANCELLED)))
+   default boolean isTestFinished(String testState) {
+      if (testState != null && (testState.equals(STATE_COMPLETE) || testState.equals(STATE_FAILED) || testState.equals(STATE_ERROR) || testState.equals(STATE_CANCELLED)))
          return true;
       return false;
    }

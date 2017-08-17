@@ -22,6 +22,7 @@ import com.github.lbroudoux.microcks.jenkins.plugin.model.GlobalConfig;
 import com.github.lbroudoux.microcks.jenkins.plugin.model.IMicrocksTester;
 import hudson.Extension;
 import hudson.tasks.Builder;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * @author laurent
@@ -32,7 +33,9 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    protected final String testEndpoint;
    protected final String runnerType;
 
-   protected MicrocksTester(String apiURL, String verbose, String serviceId, String testEndpoint, String runnerType, String waitTime, String waitUnit) {
+   // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
+   @DataBoundConstructor
+   public MicrocksTester(String apiURL, String serviceId, String testEndpoint, String runnerType, String verbose, String waitTime, String waitUnit) {
       super(apiURL, verbose, waitTime, waitUnit);
       this.serviceId = serviceId != null ? serviceId.trim() : null;
       this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
@@ -60,6 +63,10 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
     */
    @Extension // This indicates to Jenkins that this is an implementation of an extension point.
    public static final class DescriptorImpl extends TimedBuildStepDescriptor<Builder> {
+
+      public String getDisplayName() {
+         return DISPLAY_NAME;
+      }
 
       @Override
       protected long getStaticDefaultWaitTime() {

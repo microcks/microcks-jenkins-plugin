@@ -16,7 +16,7 @@
     <select name="runnerType">
       <option value="HTTP">HTTP</option>
       <option value="SOAP">SOAP</option>
-      <option value="SOAP_UI">SOAP</option>
+      <option value="SOAP_UI">SOAP_UI</option>
       <option value="POSTMAN">POSTMAN</option>
     </select>
   </f:entry>

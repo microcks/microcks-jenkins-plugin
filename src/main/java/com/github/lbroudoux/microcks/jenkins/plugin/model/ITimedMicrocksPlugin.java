@@ -18,6 +18,8 @@
  */
 package com.github.lbroudoux.microcks.jenkins.plugin.model;
 
+import hudson.model.TaskListener;
+
 /**
  * @author laurent
  */
@@ -74,7 +76,7 @@ public interface ITimedMicrocksPlugin extends IMicrocksPlugin {
          }
       }
 
-      public long toMilliseconds( String value, long def ) {
+      public long toMilliseconds(String value, long def) {
          if ( value == null || value.trim().isEmpty() ) {
             return def;
          }
@@ -85,9 +87,28 @@ public interface ITimedMicrocksPlugin extends IMicrocksPlugin {
 
    }
 
-   String getWaitTime();
+   public String getWaitTime();
 
-   String getWaitUnit();
+   public String getWaitUnit();
 
    long getGlobalTimeoutConfiguration();
+
+   default long getTimeout(TaskListener listener, boolean chatty) {
+      long global = getGlobalTimeoutConfiguration();
+
+      TimeoutUnit unit = TimeoutUnit.getByName( getWaitUnit() );
+      long chosen = unit.toMilliseconds(getWaitTime(), global);
+
+      if (chatty) {
+         listener.getLogger().println( "Found global job type timeout configuration: "  + global + " milliseconds" );
+         if (getWaitTime() == null || getWaitTime().trim().isEmpty()) {
+            listener.getLogger().println( "No local timeout configured for this step" );
+         } else {
+            listener.getLogger().println( "Local step timeout configuration: " + getWaitTime() + " " + unit );
+         }
+      }
+
+      listener.getLogger().println( "Operation will timeout after " + chosen + " milliseconds" );
+      return chosen;
+   }
 }
