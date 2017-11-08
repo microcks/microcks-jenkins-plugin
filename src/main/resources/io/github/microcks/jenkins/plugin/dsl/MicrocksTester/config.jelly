@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <st:include page="connect.jelly" class="io.github.microcks.jenkins.plugin.Common" />
+
+  <f:entry title="The identifier of Microcks service to launch tests for" field="serviceId">
+    <f:textbox  />
+  </f:entry>
+
+  <f:entry title="A valid endpoint to use for testing the Service" field="testEndpoint">
+    <f:textbox  />
+  </f:entry>
+
+
+  <f:entry title="The type of runner to use for this test" field="runnerType">
+    <select name="runnerType">
+      <option value="HTTP">HTTP</option>
+      <option value="SOAP">SOAP</option>
+      <option value="SOAP_UI">SOAP_UI</option>
+      <option value="POSTMAN">POSTMAN</option>
+    </select>
+  </f:entry>
+
+  <st:include page="verbose-wait.jelly" class="io.github.microcks.jenkins.plugin.Common" />
+
+</j:jelly>
