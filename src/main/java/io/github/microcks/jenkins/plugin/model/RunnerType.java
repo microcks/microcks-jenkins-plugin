@@ -23,7 +23,7 @@ package io.github.microcks.jenkins.plugin.model;
  */
 public enum RunnerType {
    HTTP,
-   SOAP,
+   SOAP_HTTP,
    SOAP_UI,
    POSTMAN
 }

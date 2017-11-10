@@ -18,7 +18,7 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-docker build -f ./Dockerfile-test-plugin -t lbroudoux/microcks-jenkins-plugin-test:latest .
+docker build -f ./Dockerfile-test-plugin -t microcks/microcks-jenkins-plugin-test:latest .
 if [ "$?" != "0" ]; then
     echo "Error building Jenkins snapshot image for plugin testing"
     exit 1
@@ -26,4 +26,4 @@ fi
 
 rm -rf jpi
 
-echo "Success ! Run docker run -p 8080:8080 -p 50000:50000 lbroudoux/microcks-jenkins-plugin-test:latest"
+echo "Success ! Run docker run -p 8080:8080 -p 50000:50000 microcks/microcks-jenkins-plugin-test:latest"
