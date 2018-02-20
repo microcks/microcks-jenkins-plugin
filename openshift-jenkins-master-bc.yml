@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: microcks-jenkins-master
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: microcks-jenkins-master-bc
+    name: microcks-jenkins-master
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: BuildConfig for Jenkins master embedding Microcks plugin (see http://microcks.github.io)
+    labels: {}
+    name: microcks-jenkins-master-bc
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: microcks-jenkins-master:latest
+    runPolicy: Serial
+    source:
+      dockerfile: |-
+        FROM openshift/jenkins:2
+        ADD http://central.maven.org/maven2/io/github/microcks/microcks-jenkins-plugin/0.1.0/microcks-jenkins-plugin-0.1.0.hpi /opt/microcks-jenkins-plugin.hpi
+        USER root
+        RUN cp /opt/microcks-jenkins-plugin.hpi /opt/openshift/plugins/microcks-jenkins-plugin.hpi && \
+          chmod 555 /opt/openshift/plugins/microcks-jenkins-plugin.hpi
+        USER 1001
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: jenkins:2
+          namespace: openshift
+    triggers:
+    - type: ImageChange
+    - type: ConfigChang
