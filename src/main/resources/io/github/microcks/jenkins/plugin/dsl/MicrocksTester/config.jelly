@@ -18,6 +18,7 @@
       <option value="SOAP_HTTP">SOAP</option>
       <option value="SOAP_UI">SOAP_UI</option>
       <option value="POSTMAN">POSTMAN</option>
+      <option value="OPEN_API_SCHEMA">OPEN_API_SCHEMA</option>
     </select>
   </f:entry>
 

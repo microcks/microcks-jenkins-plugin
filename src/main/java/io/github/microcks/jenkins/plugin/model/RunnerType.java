@@ -19,11 +19,13 @@
 package io.github.microcks.jenkins.plugin.model;
 
 /**
+ * Enumeration of runner types available in Microcks.
  * @author laurent
  */
 public enum RunnerType {
    HTTP,
    SOAP_HTTP,
    SOAP_UI,
-   POSTMAN
+   POSTMAN,
+   OPEN_API_SCHEMA
 }
