@@ -25,7 +25,7 @@ objects:
     source:
       dockerfile: |-
         FROM openshift/jenkins:2
-        ADD http://central.maven.org/maven2/io/github/microcks/microcks-jenkins-plugin/0.1.0/microcks-jenkins-plugin-0.1.0.hpi /opt/microcks-jenkins-plugin.hpi
+        ADD http://central.maven.org/maven2/io/github/microcks/microcks-jenkins-plugin/0.1.1/microcks-jenkins-plugin-0.1.1.hpi /opt/microcks-jenkins-plugin.hpi
         USER root
         RUN cp /opt/microcks-jenkins-plugin.hpi /opt/openshift/plugins/microcks-jenkins-plugin.hpi && \
           chmod 555 /opt/openshift/plugins/microcks-jenkins-plugin.hpi
