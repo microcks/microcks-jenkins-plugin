@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+  <f:section title="Microcks">
+    <f:entry title="Microcks Installation">
+      <f:repeatable field="microcksInstallations">
+        <table width="100%">
+          <f:entry title="${%Name}" field="microcksDisplayName" help="/plugin/microcks-jenkins-pipeline/help-displayName.html">
+            <f:textbox/>
+          </f:entry>
+          <f:entry title="${%API URL}" field="microcksApiURL" help="/plugin/microcks-jenkins-pipeline/help-server.html">
+            <f:textbox/>
+          </f:entry>
+          <f:entry title="${%Keycloak URL}" field="microcksKeycloakURL" help="/plugin/microcks-jenkins-pipeline/help-keycloakURL.html">
+            <f:textbox/>
+          </f:entry>
+          <f:entry title="${%Credentials}" field="microcksCredentialsId">
+            <c:select/>
+          </f:entry>
+          <f:entry title="${%Disable Cert validation}" field="disableSSLValidation">
+            <f:checkbox/>
+          </f:entry>
+
+          <f:validateButton
+              title="${%Test Connection}" progress="${%Testing...}"
+              method="testMicrocksConnection" with="microcksApiURL,microcksKeycloakURL,microcksCredentialsId,disableSSLValidation" />
+
+          <f:entry>
+            <div align="right">
+              <f:repeatableDeleteButton />
+            </div>
+          </f:entry>
+        </table>
+      </f:repeatable>
+    </f:entry>
+  </f:section>
+</j:jelly>

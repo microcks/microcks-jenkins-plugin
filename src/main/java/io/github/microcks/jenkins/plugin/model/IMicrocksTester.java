@@ -18,15 +18,15 @@
  */
 package io.github.microcks.jenkins.plugin.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.microcks.jenkins.plugin.Messages;
 import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import okhttp3.*;
+import io.github.microcks.jenkins.plugin.MicrocksGlobalConfiguration;
+import io.github.microcks.jenkins.plugin.util.MicrocksConfigException;
+import io.github.microcks.jenkins.plugin.util.MicrocksConnector;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -63,33 +63,31 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       long startTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime());
       long wait = getTimeout(listener, chatty);
 
-      // Build a new Http client to
-      OkHttpClient client = new OkHttpClient();
-      StringBuilder builder = new StringBuilder("{");
-      builder.append("\"serviceId\": \"").append(getServiceId()).append("\", ");
-      builder.append("\"testEndpoint\": \"").append(getTestEndpoint()).append("\", ");
-      builder.append("\"runnerType\": \"").append(getRunnerType()).append("\"");
-      builder.append("}");
+      MicrocksInstallation microcksServer = MicrocksGlobalConfiguration.get().getMicrocksInstallationByName(getServer());
+      MicrocksConnector microcksConnector = null;
+      try {
+         microcksConnector= microcksServer.getMicrocksConnector();
+      } catch (MicrocksConfigException mce) {
+         listener.getLogger().println(String.format(Messages.EXIT_CONFIG_BAD, getTestConfig(), mce.getMessage()));
+         return false;
+      }
 
       if (chatty) {
-         listener.getLogger().println("\n MicrocksTester launching new test with " + builder.toString());
+         listener.getLogger().println("\n MicrocksTester connectiong to microcks server successful");
+         listener.getLogger().println("\n MicrocksTester launching new test with " + getTestConfig());
       }
       String testResultId = null;
       try {
-         String response = this.createTestResult(client, builder.toString());
+         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType());
          if (chatty) {
-            listener.getLogger().println("\n MicrocksTester got response: " + response);
+            listener.getLogger().println("\n MicrocksTester got response: " + testResultId);
          }
-         // Convert response to Node using Jackson object mapper.
-         ObjectMapper mapper = new ObjectMapper();
-         JsonNode responseNode = mapper.readTree(response);
-         testResultId = responseNode.path("id").asText();
       } catch (IOException e) {
          e.printStackTrace();
       }
 
       // Now waiting on test completion or cancelling.
-      boolean testResult = waitOnTest(client, testResultId, listener, startTime, wait, chatty);
+      boolean testResult = waitOnTest(microcksConnector, testResultId, listener, startTime, wait, chatty);
 
       if (testResult) {
          listener.getLogger().println(String.format(Messages.EXIT_TEST_GOOD, getTestConfig(), testResultId));
@@ -99,27 +97,23 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       return testResult;
    }
 
-   default boolean waitOnTest(OkHttpClient client, String testResultId, TaskListener listener, long startTime, long wait, boolean chatty) throws InterruptedException {
+   default boolean waitOnTest(MicrocksConnector connector, String testResultId, TaskListener listener, long startTime, long wait, boolean chatty) throws InterruptedException {
       boolean success = false;
-      ObjectMapper mapper = new ObjectMapper();
 
       while (TimeUnit.NANOSECONDS.toMillis(System.nanoTime()) < (startTime + wait)) {
          if (chatty) {
             listener.getLogger().println(String.format("\n MicrocksTester checking if test \"%s\" is still in progress.", testResultId));
          }
          try {
-            String response = this.getTestResult(client, testResultId);
-            JsonNode responseNode = mapper.readTree(response);
+            TestResultSummary testResult = connector.getTestResult(testResultId);
 
-            String successString = responseNode.path("success").asText();
-            String inProgressString = responseNode.path("inProgress").asText();
-            success = Boolean.parseBoolean(successString);
-            boolean inProgress = Boolean.parseBoolean(inProgressString);
+            success = testResult.isSuccess();
+            boolean inProgress = testResult.isInProgress();
 
 
             if (chatty) {
                listener.getLogger().println(String.format("\n MicrocksTester got status for test \"%s\" - success: %s, inProgress: %s",
-                     testResultId, successString, inProgressString));
+                     testResultId, success, inProgress));
             }
             if (!inProgress) {
                break;
@@ -143,26 +137,5 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
          }
       }
       return success;
-   }
-
-   default String createTestResult(OkHttpClient client, String json) throws IOException {
-      MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-      RequestBody body = RequestBody.create(JSON, json);
-      Request request = new Request.Builder()
-            .url(getApiURL() + "/tests")
-            .post(body)
-            .build();
-      Response response = client.newCall(request).execute();
-      return response.body().string();
-   }
-
-   default String getTestResult(OkHttpClient client, String testResultId) throws IOException {
-      Request request = new Request.Builder()
-            .url(getApiURL() + "/tests/" + testResultId)
-            .addHeader("Accept", "application/json")
-            .get()
-            .build();
-      Response response = client.newCall(request).execute();
-      return response.body().string();
    }
 }

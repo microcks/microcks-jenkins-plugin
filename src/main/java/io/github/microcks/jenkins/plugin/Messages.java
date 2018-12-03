@@ -23,7 +23,7 @@ package io.github.microcks.jenkins.plugin;
  */
 public class Messages {
 
-
+   public static final String EXIT_CONFIG_BAD = "\n\nExiting \"%s\" unsuccessfully; configuration is not correct: \"%s\"";
    public static final String EXIT_TEST_BAD = "\n\nExiting \"%s\" unsuccessfully; test \"%s\" did not complete successfully within the configured timeout of \"%s\" ms.";
    public static final String EXIT_TEST_GOOD = "\n\nExiting \"%s\" successfully; test \"%s\" has completed successfully with success.";
    public static final String START_TEST_RELATED_PLUGINS = "\n\nStarting the \"%s\" step with test config \"%s\".";

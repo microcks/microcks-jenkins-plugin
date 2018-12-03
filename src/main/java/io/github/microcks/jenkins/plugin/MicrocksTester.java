@@ -35,8 +35,8 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
 
    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
    @DataBoundConstructor
-   public MicrocksTester(String apiURL, String serviceId, String testEndpoint, String runnerType, String verbose, String waitTime, String waitUnit) {
-      super(apiURL, verbose, waitTime, waitUnit);
+   public MicrocksTester(String server, String serviceId, String testEndpoint, String runnerType, String verbose, String waitTime, String waitUnit) {
+      super(server, verbose, waitTime, waitUnit);
       this.serviceId = serviceId != null ? serviceId.trim() : null;
       this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
       this.runnerType = runnerType != null ? runnerType.trim() : null;

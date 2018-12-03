@@ -41,7 +41,7 @@ public interface IMicrocksPlugin {
    public static final String STATE_ERROR = "Error";
    public static final String STATE_FAILED = "Failed";
 
-   public String getApiURL();
+   public String getServer();
 
    public String getVerbose();
 

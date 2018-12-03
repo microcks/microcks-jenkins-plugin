@@ -18,9 +18,12 @@
  */
 package io.github.microcks.jenkins.plugin.model;
 
+import hudson.model.Project;
 import io.github.microcks.jenkins.plugin.CommonParamsHelper;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import io.github.microcks.jenkins.plugin.MicrocksGlobalConfiguration;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
@@ -31,9 +34,18 @@ import java.io.IOException;
  */
 public interface IMicrocksPluginDescriptor {
 
-   default FormValidation doCheckApiURL(@QueryParameter String value)
+   default FormValidation doCheckServer(@QueryParameter String value)
          throws IOException, ServletException {
-      return CommonParamsHelper.doCheckApiURL(value);
+      return CommonParamsHelper.doCheckServer(value);
+   }
+
+   default ListBoxModel doFillServerItems() {
+      ListBoxModel items = new ListBoxModel();
+      items.add(" - None -");
+      for (MicrocksInstallation installation : MicrocksGlobalConfiguration.get().getMicrocksInstallations()) {
+         items.add(installation.getMicrocksDisplayName());
+      }
+      return items;
    }
 
    default ListBoxModel doFillWaitUnitItems() {

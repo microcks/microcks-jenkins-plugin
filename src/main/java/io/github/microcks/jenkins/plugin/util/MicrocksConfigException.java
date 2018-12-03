@@ -16,32 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.github.microcks.jenkins.plugin;
-
-import io.github.microcks.jenkins.plugin.model.ITimedMicrocksPlugin;
-import jenkins.tasks.SimpleBuildStep;
-
-import java.io.Serializable;
+package io.github.microcks.jenkins.plugin.util;
 
 /**
+ * Custom exception for tracking connection exception at configuration time.
  * @author laurent
  */
-public abstract class TimedMicrocksBaseStep extends MicrocksBaseStep implements SimpleBuildStep, Serializable, ITimedMicrocksPlugin {
+public class MicrocksConfigException extends Exception {
 
-   protected final String waitTime;
-   protected final String waitUnit;
-
-   protected TimedMicrocksBaseStep(String server, String verbose, String waitTime, String waitUnit) {
-      super(server, verbose);
-      this.waitTime = waitTime != null ? waitTime.trim() : null;
-      this.waitUnit = waitUnit != null ? waitUnit.trim() : null;
+   public MicrocksConfigException(String message) {
+      super(message);
    }
 
-   public final String getWaitTime() {
-      return waitTime;
-   }
-
-   public final String getWaitUnit() {
-      return TimeoutUnit.normalize(waitUnit);
+   public MicrocksConfigException(String message, Throwable cause) {
+      super(message, cause);
    }
 }

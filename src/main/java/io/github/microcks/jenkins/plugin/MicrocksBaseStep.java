@@ -36,16 +36,16 @@ import java.io.Serializable;
  */
 public abstract class MicrocksBaseStep extends Builder implements SimpleBuildStep, Serializable, IMicrocksPlugin {
 
-   protected final String apiURL;
+   protected final String server;
    protected final String verbose;
 
-   protected MicrocksBaseStep(String apiURL, String verbose) {
-      this.apiURL = apiURL != null ? apiURL.trim() : null;
+   protected MicrocksBaseStep(String server, String verbose) {
+      this.server = server != null ? server.trim() : null;
       this.verbose = verbose != null ? verbose.trim() : null;
    }
 
-   public String getApiURL() {
-      return apiURL;
+   public String getServer() {
+      return server;
    }
 
    public String getVerbose() {

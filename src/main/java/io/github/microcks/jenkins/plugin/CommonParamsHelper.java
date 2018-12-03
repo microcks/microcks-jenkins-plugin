@@ -30,17 +30,17 @@ import java.util.Map;
  */
 public class CommonParamsHelper {
 
-   public static FormValidation doCheckApiURL(@QueryParameter String value) {
+   public static FormValidation doCheckServer(@QueryParameter String value) {
       if (value.length() == 0)
-         return FormValidation.warning("Unless you specify a value here, one of the default API endpoints will be used; see this field's help or https://github.com/microcks/microcks-jenkins-plugin#common-aspects for details");
+         return FormValidation.error("You have to specify a registred Microcks Installation within server field");
       return FormValidation.ok();
    }
 
    public static void updateDSLBaseStep(Map<String, Object> arguments, MicrocksBaseStep step) {
-      if (arguments.containsKey("apiURL")) {
-         Object apiURL = arguments.get("apiURL");
-         if (apiURL != null) {
-            step.setApiURL(apiURL.toString());
+      if (arguments.containsKey("server")) {
+         Object server = arguments.get("server");
+         if (server != null) {
+            step.setServer(server.toString());
          }
       }
 
