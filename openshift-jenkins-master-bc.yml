@@ -25,7 +25,7 @@ objects:
     source:
       dockerfile: |-
         FROM openshift/jenkins:2
-        ADD http://central.maven.org/maven2/io/github/microcks/microcks-jenkins-plugin/0.1.1/microcks-jenkins-plugin-0.1.1.hpi /opt/microcks-jenkins-plugin.hpi
+        ADD http://central.maven.org/maven2/io/github/microcks/microcks-jenkins-plugin/${MICROCKS_JENKINS_PLUGIN_VERSION}/microcks-jenkins-plugin-${MICROCKS_JENKINS_PLUGIN_VERSION}.hpi /opt/microcks-jenkins-plugin.hpi
         USER root
         RUN cp /opt/microcks-jenkins-plugin.hpi /opt/openshift/plugins/microcks-jenkins-plugin.hpi && \
           chmod 555 /opt/openshift/plugins/microcks-jenkins-plugin.hpi
@@ -39,4 +39,10 @@ objects:
           namespace: openshift
     triggers:
     - type: ImageChange
-    - type: ConfigChang
+    - type: ConfigChange
+parameters:
+- description: The version of the Microcks Jenkins Plugin to include into Jenkins 
+  displayName: Microcks Jenkins Plugin Version
+  name: MICROCKS_JENKINS_PLUGIN_VERSION
+  required: true
+  value: 0.1.1
