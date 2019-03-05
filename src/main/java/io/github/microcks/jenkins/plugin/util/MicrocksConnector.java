@@ -26,6 +26,8 @@ import okhttp3.*;
 
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author laurent
@@ -57,12 +59,20 @@ public class MicrocksConnector {
       }
    }
 
-   public String createTestResult(String serviceId, String testEndpoint, String runnerType) throws IOException {
+   public String createTestResult(String serviceId, String testEndpoint, String runnerType, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
+      // Prepare a Jackson object mapper.
+      ObjectMapper mapper = new ObjectMapper();
+
       StringBuilder builder = new StringBuilder("{");
       builder.append("\"serviceId\": \"").append(serviceId).append("\", ");
       builder.append("\"testEndpoint\": \"").append(testEndpoint).append("\", ");
       builder.append("\"runnerType\": \"").append(runnerType).append("\"");
+      if (operationsHeaders != null && !operationsHeaders.isEmpty()) {
+         builder.append(", \"operationsHeaders\": ").append(mapper.writeValueAsString(operationsHeaders));
+      }
       builder.append("}");
+
+      System.err.println("Microcks test creation request: " + builder.toString());
 
       MediaType JSON = MediaType.parse("application/json; charset=utf-8");
       RequestBody body = RequestBody.create(JSON, builder.toString());
@@ -74,7 +84,6 @@ public class MicrocksConnector {
       Response response = client.newCall(request).execute();
 
       // Convert response to Node using Jackson object mapper.
-      ObjectMapper mapper = new ObjectMapper();
       JsonNode responseNode = mapper.readTree(response.body().string());
       return responseNode.path("id").asText();
    }

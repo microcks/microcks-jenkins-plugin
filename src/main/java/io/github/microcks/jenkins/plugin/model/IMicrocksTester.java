@@ -29,6 +29,8 @@ import io.github.microcks.jenkins.plugin.util.MicrocksConfigException;
 import io.github.microcks.jenkins.plugin.util.MicrocksConnector;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +49,9 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
    String getTestEndpoint();
 
    String getRunnerType();
+
+   Map<String, List<Map<String, String>>> getOperationsHeaders();
+
 
    default long getGlobalTimeoutConfiguration() {
       return GlobalConfig.getTestWait();
@@ -73,12 +78,12 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       }
 
       if (chatty) {
-         listener.getLogger().println("\n MicrocksTester connectiong to microcks server successful");
+         listener.getLogger().println("\n MicrocksTester connecting to microcks server successful");
          listener.getLogger().println("\n MicrocksTester launching new test with " + getTestConfig());
       }
       String testResultId = null;
       try {
-         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType());
+         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType(), getOperationsHeaders());
          if (chatty) {
             listener.getLogger().println("\n MicrocksTester got response: " + testResultId);
          }

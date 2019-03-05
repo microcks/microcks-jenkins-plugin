@@ -11,7 +11,6 @@
     <f:textbox  />
   </f:entry>
 
-
   <f:entry title="The type of runner to use for this test" field="runnerType">
     <select name="runnerType">
       <option value="HTTP">HTTP</option>
@@ -20,6 +19,10 @@
       <option value="POSTMAN">POSTMAN</option>
       <option value="OPEN_API_SCHEMA">OPEN_API_SCHEMA</option>
     </select>
+  </f:entry>
+
+  <f:entry title="The JSON representing additional headers for operations" field="operationsHeaders">
+    <f:textarea field="operationsHeaders"/>
   </f:entry>
 
   <st:include page="verbose-wait.jelly" class="io.github.microcks.jenkins.plugin.Common" />
