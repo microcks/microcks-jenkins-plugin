@@ -50,6 +50,8 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
 
    String getRunnerType();
 
+   String getSecretName();
+
    Map<String, List<Map<String, String>>> getOperationsHeaders();
 
 
@@ -83,7 +85,8 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       }
       String testResultId = null;
       try {
-         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType(), getOperationsHeaders());
+         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType(),
+               getSecretName(), wait, getOperationsHeaders());
          if (chatty) {
             listener.getLogger().println("\n MicrocksTester got response: " + testResultId);
          }
@@ -92,7 +95,8 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       }
 
       // Now waiting on test completion or cancelling.
-      boolean testResult = waitOnTest(microcksConnector, testResultId, listener, startTime, wait, chatty);
+      // Add 500ms to wait time as it's now representing the server timeout.
+      boolean testResult = waitOnTest(microcksConnector, testResultId, listener, startTime, wait + 500, chatty);
 
       if (testResult) {
          listener.getLogger().println(String.format(Messages.EXIT_TEST_GOOD, getTestConfig(), testResultId));

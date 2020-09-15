@@ -37,16 +37,18 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    protected final String serviceId;
    protected final String testEndpoint;
    protected final String runnerType;
+   protected final String secretName;
    protected final String operationsHeaders;
 
    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
    @DataBoundConstructor
-   public MicrocksTester(String server, String serviceId, String testEndpoint, String runnerType, String operationsHeaders,
-                         String verbose, String waitTime, String waitUnit) {
+   public MicrocksTester(String server, String serviceId, String testEndpoint, String runnerType, String secretName,
+                         String operationsHeaders, String verbose, String waitTime, String waitUnit) {
       super(server, verbose, waitTime, waitUnit);
       this.serviceId = serviceId != null ? serviceId.trim() : null;
       this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
       this.runnerType = runnerType != null ? runnerType.trim() : null;
+      this.secretName = secretName != null ? secretName.trim() : null;
       this.operationsHeaders = operationsHeaders != null ? operationsHeaders.trim() : null;
    }
 
@@ -66,47 +68,53 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    }
 
    @Override
+   public String getSecretName() {
+      return secretName;
+   }
+
+   @Override
    public Map<String, List<Map<String, String>>> getOperationsHeaders() {
       Map<String, List<Map<String, String>>> results = null;
 
-      // Add some Jackson parsing and mapping here.
-      ObjectMapper mapper = new ObjectMapper();
-      try {
-         JsonNode rootNode = mapper.readTree(this.operationsHeaders);
+      if (operationsHeaders != null && !operationsHeaders.isEmpty()) {
+         // Add some Jackson parsing and mapping here.
+         ObjectMapper mapper = new ObjectMapper();
+         try {
+            JsonNode rootNode = mapper.readTree(this.operationsHeaders);
 
-         // If we've got an object, that's a good start! Initialize results.
-         if (rootNode.isObject()) {
-            results = new HashMap<>();
+            // If we've got an object, that's a good start! Initialize results.
+            if (rootNode.isObject()) {
+               results = new HashMap<>();
 
-            Iterator<Entry<String, JsonNode>> operationNodes = rootNode.fields();
-            while (operationNodes.hasNext()) {
-               Entry<String, JsonNode> operationNode = operationNodes.next();
+               Iterator<Entry<String, JsonNode>> operationNodes = rootNode.fields();
+               while (operationNodes.hasNext()) {
+                  Entry<String, JsonNode> operationNode = operationNodes.next();
 
-               if (operationNode.getValue().isArray()) {
-                  List<Map<String, String>> operationHeadersList = new ArrayList<>();
+                  if (operationNode.getValue().isArray()) {
+                     List<Map<String, String>> operationHeadersList = new ArrayList<>();
 
-                  Iterator<JsonNode> headerNodes = operationNode.getValue().iterator();
-                  while (headerNodes.hasNext()) {
-                     JsonNode headerNode = headerNodes.next();
+                     Iterator<JsonNode> headerNodes = operationNode.getValue().iterator();
+                     while (headerNodes.hasNext()) {
+                        JsonNode headerNode = headerNodes.next();
 
-                     // If we've got correct keys, add the header to the list.
-                     if (headerNode.has("name") && headerNode.has("values")) {
-                        Map<String, String> header = new HashMap<>();
-                        header.put("name", headerNode.get("name").textValue());
-                        header.put("values", headerNode.get("values").textValue());
-                        operationHeadersList.add(header);
+                        // If we've got correct keys, add the header to the list.
+                        if (headerNode.has("name") && headerNode.has("values")) {
+                           Map<String, String> header = new HashMap<>();
+                           header.put("name", headerNode.get("name").textValue());
+                           header.put("values", headerNode.get("values").textValue());
+                           operationHeadersList.add(header);
+                        }
                      }
-                  }
-                  // If we've got at least one header, record the operation headers in results.
-                  if (operationHeadersList.size() > 0) {
-                     results.put(operationNode.getKey(), operationHeadersList);
+                     // If we've got at least one header, record the operation headers in results.
+                     if (operationHeadersList.size() > 0) {
+                        results.put(operationNode.getKey(), operationHeadersList);
+                     }
                   }
                }
             }
+         } catch (Exception e) {
+            System.err.println("Exception while parsing operationsHeaders field: " + e.getMessage());
          }
-      } catch (Exception e) {
-         e.printStackTrace();
-         System.err.println("Exception while parsing operationsHeaders field: " + e.getMessage());
       }
       return results;
    }

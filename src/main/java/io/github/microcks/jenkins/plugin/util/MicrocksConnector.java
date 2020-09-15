@@ -59,14 +59,19 @@ public class MicrocksConnector {
       }
    }
 
-   public String createTestResult(String serviceId, String testEndpoint, String runnerType, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
+   public String createTestResult(String serviceId, String testEndpoint, String runnerType, String secretName,
+                                  Long timeout, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
       // Prepare a Jackson object mapper.
       ObjectMapper mapper = new ObjectMapper();
 
       StringBuilder builder = new StringBuilder("{");
       builder.append("\"serviceId\": \"").append(serviceId).append("\", ");
       builder.append("\"testEndpoint\": \"").append(testEndpoint).append("\", ");
-      builder.append("\"runnerType\": \"").append(runnerType).append("\"");
+      builder.append("\"runnerType\": \"").append(runnerType).append("\", ");
+      builder.append("\"timeout\": ").append(timeout);
+      if (secretName != null && !secretName.isEmpty()) {
+         builder.append(", \"secretName\": \"").append(secretName).append("\"");
+      }
       if (operationsHeaders != null && !operationsHeaders.isEmpty()) {
          builder.append(", \"operationsHeaders\": ").append(mapper.writeValueAsString(operationsHeaders));
       }

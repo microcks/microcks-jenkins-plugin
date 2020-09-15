@@ -4,13 +4,13 @@
     <f:entry title="Microcks Installation">
       <f:repeatable field="microcksInstallations">
         <table width="100%">
-          <f:entry title="${%Name}" field="microcksDisplayName" help="/plugin/microcks-jenkins-pipeline/help-displayName.html">
+          <f:entry title="${%Name}" field="microcksDisplayName" help="/plugin/microcks-jenkins-plugin/help-displayName.html">
             <f:textbox/>
           </f:entry>
-          <f:entry title="${%API URL}" field="microcksApiURL" help="/plugin/microcks-jenkins-pipeline/help-server.html">
+          <f:entry title="${%API URL}" field="microcksApiURL" help="/plugin/microcks-jenkins-plugin/help-server.html">
             <f:textbox/>
           </f:entry>
-          <f:entry title="${%Keycloak URL}" field="microcksKeycloakURL" help="/plugin/microcks-jenkins-pipeline/help-keycloakURL.html">
+          <f:entry title="${%Keycloak URL}" field="microcksKeycloakURL" help="/plugin/microcks-jenkins-plugin/help-keycloakURL.html">
             <f:textbox/>
           </f:entry>
           <f:entry title="${%Credentials}" field="microcksCredentialsId">
