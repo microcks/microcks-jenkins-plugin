@@ -21,6 +21,7 @@ package io.github.microcks.jenkins.plugin.model;
 import java.util.Date;
 
 /**
+ * This is a lightweight representation of a Microcks TestResult.
  * @author laurent
  */
 public class TestResultSummary {

@@ -8,7 +8,11 @@
       <f:booleanRadio default="false"/>
     </f:entry>
 
-    <f:entry title="Default operation timeout" field="wait" help="/plugin/microcks-jenkins-plugin/help-waitTime.html">
+    <f:entry title="Secret" field="secretName" help="/plugin/microcks-jenkins-plugin/help-secretName.html">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry title="Operation test timeout" field="waitTime" help="/plugin/microcks-jenkins-plugin/help-waitTime.html">
       <f:textbox/>
     </f:entry>
 

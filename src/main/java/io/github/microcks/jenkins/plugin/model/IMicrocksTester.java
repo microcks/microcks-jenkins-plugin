@@ -29,6 +29,8 @@ import io.github.microcks.jenkins.plugin.util.MicrocksConfigException;
 import io.github.microcks.jenkins.plugin.util.MicrocksConnector;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,6 +49,11 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
    String getTestEndpoint();
 
    String getRunnerType();
+
+   String getSecretName();
+
+   Map<String, List<Map<String, String>>> getOperationsHeaders();
+
 
    default long getGlobalTimeoutConfiguration() {
       return GlobalConfig.getTestWait();
@@ -73,12 +80,13 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       }
 
       if (chatty) {
-         listener.getLogger().println("\n MicrocksTester connectiong to microcks server successful");
+         listener.getLogger().println("\n MicrocksTester connecting to microcks server successful");
          listener.getLogger().println("\n MicrocksTester launching new test with " + getTestConfig());
       }
       String testResultId = null;
       try {
-         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType());
+         testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType(),
+               getSecretName(), wait, getOperationsHeaders());
          if (chatty) {
             listener.getLogger().println("\n MicrocksTester got response: " + testResultId);
          }
@@ -87,7 +95,8 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       }
 
       // Now waiting on test completion or cancelling.
-      boolean testResult = waitOnTest(microcksConnector, testResultId, listener, startTime, wait, chatty);
+      // Add 500ms to wait time as it's now representing the server timeout.
+      boolean testResult = waitOnTest(microcksConnector, testResultId, listener, startTime, wait + 500, chatty);
 
       if (testResult) {
          listener.getLogger().println(String.format(Messages.EXIT_TEST_GOOD, getTestConfig(), testResultId));

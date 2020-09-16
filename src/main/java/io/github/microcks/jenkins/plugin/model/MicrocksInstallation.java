@@ -37,6 +37,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.cloudbees.plugins.credentials.CredentialsMatchers.instanceOf;
@@ -48,16 +49,13 @@ public class MicrocksInstallation extends AbstractDescribableImpl<MicrocksInstal
 
    private final String microcksDisplayName;
    private final String microcksApiURL;
-   private final String microcksKeycloakURL;
    private final String microcksCredentialsId;
    private final boolean disableSSLValidation;
 
    @DataBoundConstructor
-   public MicrocksInstallation(String microcksDisplayName, String microcksApiURL, String microcksKeycloakURL,
-                               String microcksCredentialsId, boolean disableSSLValidation) {
+   public MicrocksInstallation(String microcksDisplayName, String microcksApiURL, String microcksCredentialsId, boolean disableSSLValidation) {
       this.microcksDisplayName = microcksDisplayName;
       this.microcksApiURL = microcksApiURL;
-      this.microcksKeycloakURL = microcksKeycloakURL;
       this.microcksCredentialsId = microcksCredentialsId;
       this.disableSSLValidation = disableSSLValidation;
    }
@@ -71,10 +69,6 @@ public class MicrocksInstallation extends AbstractDescribableImpl<MicrocksInstal
       return microcksApiURL;
    }
 
-   public String getMicrocksKeycloakURL() {
-      return microcksKeycloakURL;
-   }
-
    public String getMicrocksCredentialsId() {
       return microcksCredentialsId;
    }
@@ -85,8 +79,14 @@ public class MicrocksInstallation extends AbstractDescribableImpl<MicrocksInstal
       return new MicrocksConnector(this.microcksApiURL, oAuthToken, this.disableSSLValidation);
    }
 
-   public KeycloakConnector getKeycloakConnector() {
-      return getKeycloakConnector(this.microcksKeycloakURL, this.microcksCredentialsId, this.disableSSLValidation);
+   public KeycloakConnector getKeycloakConnector() throws MicrocksConfigException {
+      String microcksKeycloakURL;
+      try {
+         microcksKeycloakURL = MicrocksConnector.getKeycloakURL(this.microcksApiURL, this.disableSSLValidation);
+      } catch (IOException ioe) {
+         throw new MicrocksConfigException("Could not connect to Microcks: " + ioe.getMessage());
+      }
+      return getKeycloakConnector(microcksKeycloakURL, this.microcksCredentialsId, this.disableSSLValidation);
    }
 
    public static KeycloakConnector getKeycloakConnector(String microcksKeycloakURL, String microcksCredentialsId, boolean disableSSLValidation) {
@@ -110,13 +110,13 @@ public class MicrocksInstallation extends AbstractDescribableImpl<MicrocksInstal
 
       public FormValidation doTestMicrocksConnection(
             @QueryParameter("microcksApiURL") final String microcksApiURL,
-            @QueryParameter("microcksKeycloakURL") final String microcksKeycloakURL,
             @QueryParameter("microcksCredentialsId") final String microcksCredentialsId,
             @QueryParameter("disableSSLValidation") final boolean disableSSLValidation
       ) {
-         KeycloakConnector testConnector = MicrocksInstallation.getKeycloakConnector(microcksKeycloakURL, microcksCredentialsId, disableSSLValidation);
          try {
-            String oAuthToken = testConnector.connectAndGetToken();
+            String microcksKeycloakURL = MicrocksConnector.getKeycloakURL(microcksApiURL, disableSSLValidation);
+            KeycloakConnector testConnector = MicrocksInstallation.getKeycloakConnector(microcksKeycloakURL, microcksCredentialsId, disableSSLValidation);
+            testConnector.connectAndGetToken();
             return FormValidation.ok("Success");
          } catch (Exception e) {
             return FormValidation.error(e.getMessage());

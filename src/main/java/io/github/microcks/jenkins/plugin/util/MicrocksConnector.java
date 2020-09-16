@@ -26,6 +26,8 @@ import okhttp3.*;
 
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author laurent
@@ -39,30 +41,46 @@ public class MicrocksConnector {
    private OkHttpClient client;
 
    public MicrocksConnector(String apiURL, String oAuthToken, boolean disableSSLValidation) {
-      this.apiURL = apiURL;
+      this.apiURL = sanitizeApiURL(apiURL);
       this.oAuthToken = oAuthToken;
       this.disableSSLValidation = disableSSLValidation;
-      if (!disableSSLValidation) {
-         this.client = new OkHttpClient();
-      } else {
-         try {
-            TrustingSSLSocketFactory sslSocketFactory = new TrustingSSLSocketFactory();
-            this.client = new OkHttpClient.Builder()
-                  .sslSocketFactory(sslSocketFactory, sslSocketFactory.getTrustManager())
-                  .hostnameVerifier((String s, SSLSession sslSession) -> true)
-                  .build();
-         } catch (Exception e) {
-            throw new NullPointerException("Cannot build an HttpClient with " + e.getMessage());
-         }
-      }
+      this.client = buildHttpClient(disableSSLValidation);
    }
 
-   public String createTestResult(String serviceId, String testEndpoint, String runnerType) throws IOException {
+   public static String getKeycloakURL(String apiURL, boolean disableSSLValidation) throws IOException {
+      OkHttpClient client = buildHttpClient(disableSSLValidation);
+
+      Request request = new Request.Builder().url(sanitizeApiURL(apiURL) + "/keycloak/config")
+            .addHeader("Accept", "application/json").get().build();
+      Response response = client.newCall(request).execute();
+
+      // Convert response to Node using Jackson object mapper.
+      JsonNode responseNode = new ObjectMapper().readTree(response.body().string());
+
+      String authServerURL = responseNode.path("auth-server-url").asText();
+      String realmName = responseNode.path("realm").asText();
+      return authServerURL + "/realms/" + realmName;
+   }
+
+   public String createTestResult(String serviceId, String testEndpoint, String runnerType, String secretName,
+                                  Long timeout, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
+      // Prepare a Jackson object mapper.
+      ObjectMapper mapper = new ObjectMapper();
+
       StringBuilder builder = new StringBuilder("{");
       builder.append("\"serviceId\": \"").append(serviceId).append("\", ");
       builder.append("\"testEndpoint\": \"").append(testEndpoint).append("\", ");
-      builder.append("\"runnerType\": \"").append(runnerType).append("\"");
+      builder.append("\"runnerType\": \"").append(runnerType).append("\", ");
+      builder.append("\"timeout\": ").append(timeout);
+      if (secretName != null && !secretName.isEmpty()) {
+         builder.append(", \"secretName\": \"").append(secretName).append("\"");
+      }
+      if (operationsHeaders != null && !operationsHeaders.isEmpty()) {
+         builder.append(", \"operationsHeaders\": ").append(mapper.writeValueAsString(operationsHeaders));
+      }
       builder.append("}");
+
+      System.err.println("Microcks test creation request: " + builder.toString());
 
       MediaType JSON = MediaType.parse("application/json; charset=utf-8");
       RequestBody body = RequestBody.create(JSON, builder.toString());
@@ -74,7 +92,6 @@ public class MicrocksConnector {
       Response response = client.newCall(request).execute();
 
       // Convert response to Node using Jackson object mapper.
-      ObjectMapper mapper = new ObjectMapper();
       JsonNode responseNode = mapper.readTree(response.body().string());
       return responseNode.path("id").asText();
    }
@@ -92,5 +109,34 @@ public class MicrocksConnector {
       ObjectMapper mapper = new ObjectMapper();
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       return mapper.readValue(response.body().string(), TestResultSummary.class);
+   }
+
+   private static OkHttpClient buildHttpClient(boolean disableSSLValidation) {
+      OkHttpClient client;
+      if (!disableSSLValidation) {
+         client = new OkHttpClient();
+      } else {
+         try {
+            TrustingSSLSocketFactory sslSocketFactory = new TrustingSSLSocketFactory();
+            client = new OkHttpClient.Builder()
+                  .sslSocketFactory(sslSocketFactory, sslSocketFactory.getTrustManager())
+                  .hostnameVerifier((String s, SSLSession sslSession) -> true)
+                  .build();
+         } catch (Exception e) {
+            throw new NullPointerException("Cannot build an HttpClient with " + e.getMessage());
+         }
+      }
+      return client;
+   }
+
+   private static String sanitizeApiURL(String apiURL) {
+      if (!apiURL.endsWith("/api") || !apiURL.endsWith("/api")) {
+         if (!apiURL.endsWith("/")) {
+            apiURL += "/api";
+         } else {
+            apiURL += "api";
+         }
+      }
+      return apiURL;
    }
 }

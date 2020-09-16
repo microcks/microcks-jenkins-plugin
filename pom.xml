@@ -12,15 +12,15 @@
 
   <groupId>io.github.microcks</groupId>
   <artifactId>microcks-jenkins-plugin</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Microcks Jenkins Plugin</name>
   <description>Microcks: easy mocks for your microservices - Jenkins Plugin</description>
-  <url>http://microcks.github.io</url>
+  <url>http://microcks.io</url>
   <organization>
     <name>Microcks</name>
-    <url>http://microcks.github.io</url>
+    <url>http://microcks.io</url>
   </organization>
 
   <licenses>
@@ -35,7 +35,7 @@
     <developer>
       <id>microcks</id>
       <name>Microcks Development Team</name>
-      <organizationUrl>https://microcks.github.io/</organizationUrl>
+      <organizationUrl>https://microcks.io/</organizationUrl>
     </developer>
   </developers>
 

@@ -32,7 +32,7 @@ public class CommonParamsHelper {
 
    public static FormValidation doCheckServer(@QueryParameter String value) {
       if (value.length() == 0)
-         return FormValidation.error("You have to specify a registred Microcks Installation within server field");
+         return FormValidation.error("You have to specify a registered Microcks Installation within server field");
       return FormValidation.ok();
    }
 

@@ -33,6 +33,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,8 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    protected String serviceId;
    protected String testEndpoint;
    protected String runnerType;
+   protected String secretName;
+   protected Map<String, List<Map<String, String>>> operationsHeaders;
 
    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
    @DataBoundConstructor
@@ -78,6 +81,26 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    @DataBoundSetter
    public void setRunnerType(String runnerType) {
       this.runnerType = runnerType != null ? runnerType.trim() : null;
+   }
+
+   @Override
+   public String getSecretName() {
+      return secretName;
+   }
+
+   @DataBoundSetter
+   public void setSecretName(String secretName) {
+      this.secretName = secretName != null ? secretName.trim() : null;
+   }
+
+   @Override
+   public Map<String, List<Map<String, String>>> getOperationsHeaders() {
+      return operationsHeaders;
+   }
+
+   @DataBoundSetter
+   public void setOperationsHeaders(Map<String, List<Map<String, String>>> operationsHeaders) {
+      this.operationsHeaders = operationsHeaders;
    }
 
    @Extension
@@ -117,6 +140,18 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
             Object runnerType = arguments.get("runnerType");
             if (runnerType != null) {
                step.setRunnerType(runnerType.toString());
+            }
+         }
+         if (arguments.containsKey("secretName")) {
+            Object secretName = arguments.get("secretName");
+            if (secretName != null) {
+               step.setSecretName(secretName.toString());
+            }
+         }
+         if (arguments.containsKey("operationsHeaders")) {
+            Object operationsHeaders = arguments.get("operationsHeaders");
+            if (operationsHeaders != null && (operationsHeaders instanceof Map)) {
+               step.setOperationsHeaders((Map<String, List<Map<String, String>>>)operationsHeaders);
             }
          }
          // Fill common parameters before returning step.
