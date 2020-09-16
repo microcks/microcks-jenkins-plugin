@@ -41,7 +41,7 @@ public class MicrocksConnector {
    private OkHttpClient client;
 
    public MicrocksConnector(String apiURL, String oAuthToken, boolean disableSSLValidation) {
-      this.apiURL = apiURL;
+      this.apiURL = sanitizeApiURL(apiURL);
       this.oAuthToken = oAuthToken;
       this.disableSSLValidation = disableSSLValidation;
       this.client = buildHttpClient(disableSSLValidation);
@@ -50,7 +50,7 @@ public class MicrocksConnector {
    public static String getKeycloakURL(String apiURL, boolean disableSSLValidation) throws IOException {
       OkHttpClient client = buildHttpClient(disableSSLValidation);
 
-      Request request = new Request.Builder().url(apiURL + "/keycloak/config")
+      Request request = new Request.Builder().url(sanitizeApiURL(apiURL) + "/keycloak/config")
             .addHeader("Accept", "application/json").get().build();
       Response response = client.newCall(request).execute();
 
@@ -127,5 +127,16 @@ public class MicrocksConnector {
          }
       }
       return client;
+   }
+
+   private static String sanitizeApiURL(String apiURL) {
+      if (!apiURL.endsWith("/api") || !apiURL.endsWith("/api")) {
+         if (!apiURL.endsWith("/")) {
+            apiURL += "/api";
+         } else {
+            apiURL += "api";
+         }
+      }
+      return apiURL;
    }
 }
