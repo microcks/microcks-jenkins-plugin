@@ -10,9 +10,6 @@
           <f:entry title="${%API URL}" field="microcksApiURL" help="/plugin/microcks-jenkins-plugin/help-server.html">
             <f:textbox/>
           </f:entry>
-          <f:entry title="${%Keycloak URL}" field="microcksKeycloakURL" help="/plugin/microcks-jenkins-plugin/help-keycloakURL.html">
-            <f:textbox/>
-          </f:entry>
           <f:entry title="${%Credentials}" field="microcksCredentialsId">
             <c:select/>
           </f:entry>
@@ -22,7 +19,7 @@
 
           <f:validateButton
               title="${%Test Connection}" progress="${%Testing...}"
-              method="testMicrocksConnection" with="microcksApiURL,microcksKeycloakURL,microcksCredentialsId,disableSSLValidation" />
+              method="testMicrocksConnection" with="microcksApiURL,microcksCredentialsId,disableSSLValidation" />
 
           <f:entry>
             <div align="right">

@@ -44,19 +44,22 @@ public class MicrocksConnector {
       this.apiURL = apiURL;
       this.oAuthToken = oAuthToken;
       this.disableSSLValidation = disableSSLValidation;
-      if (!disableSSLValidation) {
-         this.client = new OkHttpClient();
-      } else {
-         try {
-            TrustingSSLSocketFactory sslSocketFactory = new TrustingSSLSocketFactory();
-            this.client = new OkHttpClient.Builder()
-                  .sslSocketFactory(sslSocketFactory, sslSocketFactory.getTrustManager())
-                  .hostnameVerifier((String s, SSLSession sslSession) -> true)
-                  .build();
-         } catch (Exception e) {
-            throw new NullPointerException("Cannot build an HttpClient with " + e.getMessage());
-         }
-      }
+      this.client = buildHttpClient(disableSSLValidation);
+   }
+
+   public static String getKeycloakURL(String apiURL, boolean disableSSLValidation) throws IOException {
+      OkHttpClient client = buildHttpClient(disableSSLValidation);
+
+      Request request = new Request.Builder().url(apiURL + "/keycloak/config")
+            .addHeader("Accept", "application/json").get().build();
+      Response response = client.newCall(request).execute();
+
+      // Convert response to Node using Jackson object mapper.
+      JsonNode responseNode = new ObjectMapper().readTree(response.body().string());
+
+      String authServerURL = responseNode.path("auth-server-url").asText();
+      String realmName = responseNode.path("realm").asText();
+      return authServerURL + "/realms/" + realmName;
    }
 
    public String createTestResult(String serviceId, String testEndpoint, String runnerType, String secretName,
@@ -106,5 +109,23 @@ public class MicrocksConnector {
       ObjectMapper mapper = new ObjectMapper();
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       return mapper.readValue(response.body().string(), TestResultSummary.class);
+   }
+
+   private static OkHttpClient buildHttpClient(boolean disableSSLValidation) {
+      OkHttpClient client;
+      if (!disableSSLValidation) {
+         client = new OkHttpClient();
+      } else {
+         try {
+            TrustingSSLSocketFactory sslSocketFactory = new TrustingSSLSocketFactory();
+            client = new OkHttpClient.Builder()
+                  .sslSocketFactory(sslSocketFactory, sslSocketFactory.getTrustManager())
+                  .hostnameVerifier((String s, SSLSession sslSession) -> true)
+                  .build();
+         } catch (Exception e) {
+            throw new NullPointerException("Cannot build an HttpClient with " + e.getMessage());
+         }
+      }
+      return client;
    }
 }
