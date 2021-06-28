@@ -25,7 +25,9 @@ import io.github.microcks.jenkins.plugin.model.TestResultSummary;
 import okhttp3.*;
 
 import javax.net.ssl.SSLSession;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -109,6 +111,33 @@ public class MicrocksConnector {
       ObjectMapper mapper = new ObjectMapper();
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       return mapper.readValue(response.body().string(), TestResultSummary.class);
+   }
+
+   public String uploadSpecification(String fileName, String fileContent, boolean mainArtifact) throws IOException, MicrocksConfigException {
+      RequestBody body = new MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", fileName,
+                  RequestBody.create(MediaType.parse("application/octet-stream"), fileContent.getBytes(StandardCharsets.UTF_8)))
+            .addFormDataPart("mainArtifact", String.valueOf(mainArtifact))
+            .build();
+      Request request = new Request.Builder()
+            .url(apiURL + "/artifact/upload")
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer " + oAuthToken)
+            .post(body)
+            .build();
+
+      Response response = client.newCall(request).execute();
+
+      // Depending on code return discovered service and version or throw exception.
+      switch (response.code()) {
+         case 201:
+            return response.body().string();
+         case 204:
+            throw new MicrocksConfigException("Microcks server did not discovered any API in " + fileName);
+         default:
+            throw new MicrocksConfigException("Microcks server returns an unexpected response");
+      }
    }
 
    private static OkHttpClient buildHttpClient(boolean disableSSLValidation) {

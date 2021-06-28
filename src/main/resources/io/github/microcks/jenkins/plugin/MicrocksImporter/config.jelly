@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <st:include page="connect.jelly" class="io.github.microcks.jenkins.plugin.Common" />
+
+  <f:entry title="The comma separated list of API specification files and primary artifact flag" field="specificationFiles"
+      help="/plugin/microcks-jenkins-pipeline/help-specificationFiles.html">
+    <f:textbox  />
+  </f:entry>
+
+</j:jelly>
