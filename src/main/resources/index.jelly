@@ -3,5 +3,5 @@
 This view is used to render the installed plugins page.
 -->
 <div>
-  This plugin facilitates the execution of tests on Microcks mocks and test .
+  This plugin facilitates the execution of tests and import of API specifications on Microcks server.
 </div>
