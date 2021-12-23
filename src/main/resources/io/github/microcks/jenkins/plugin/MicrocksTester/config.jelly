@@ -20,6 +20,7 @@
       <option value="OPEN_API_SCHEMA">OPEN_API_SCHEMA</option>
       <option value="ASYNC_API_SCHEMA">ASYNC_API_SCHEMA</option>
       <option value="GRPC_PROTOBUF">GRPC_PROTOBUF</option>
+      <option value="GRAPHQL_SCHEMA">GRAPHQL_SCHEMA</option>
     </select>
   </f:entry>
 
