@@ -60,7 +60,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <jenkins-core.version>1.651</jenkins-core.version>
+    <jenkins-core.version>2.319.2</jenkins-core.version>
     <jenkins-workflow.version>1.11</jenkins-workflow.version>
   </properties>
 
