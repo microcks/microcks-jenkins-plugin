@@ -11,9 +11,9 @@ Jenkins plugin for easily running tests or import API artifacts in Microks insta
 
 ## Build Status
 
-Latest released version is `0.5.0`.
+Latest released version is `0.6.0`.
 
-Current development version is `0.6.0-SNAPSHOT`. [![Build Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-jenkins-plugin/build-verify.yml?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-jenkins-plugin/actions)
+Current development version is `0.6.1-SNAPSHOT`. [![Build Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-jenkins-plugin/build-verify.yml?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-jenkins-plugin/actions)
 
 #### Fossa license and security scans
 
