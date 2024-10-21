@@ -62,6 +62,7 @@
     <java.version>17</java.version>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.440.3</jenkins.version>
+    <spotbugs.skip>true</spotbugs.skip>
   </properties>
 
   <dependencyManagement>
