@@ -24,6 +24,10 @@
     </select>
   </f:entry>
 
+  <f:entry title="The JSON array containing the names of filtered operations" field="filteredOperations">
+    <f:textarea field="filteredOperations"/>
+  </f:entry>
+
   <f:entry title="The JSON representing additional headers for operations" field="operationsHeaders">
     <f:textarea field="operationsHeaders"/>
   </f:entry>

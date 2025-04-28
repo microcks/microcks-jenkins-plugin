@@ -21,6 +21,7 @@ package io.github.microcks.jenkins.plugin.dsl;
 import io.github.microcks.jenkins.plugin.CommonParamsHelper;
 import io.github.microcks.jenkins.plugin.model.IMicrocksPluginDescriptor;
 import io.github.microcks.jenkins.plugin.model.IMicrocksTester;
+
 import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -45,12 +46,12 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    protected String testEndpoint;
    protected String runnerType;
    protected String secretName;
+   protected List<String> filteredOperations;
    protected Map<String, List<Map<String, String>>> operationsHeaders;
 
    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
    @DataBoundConstructor
    public MicrocksTester() {
-
    }
 
    @Override
@@ -91,6 +92,16 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    @DataBoundSetter
    public void setSecretName(String secretName) {
       this.secretName = secretName != null ? secretName.trim() : null;
+   }
+
+   @Override
+   public List<String> getFilteredOperations() {
+      return filteredOperations;
+   }
+
+   @DataBoundSetter
+   public void setFilteredOperations(List<String> filteredOperations) {
+      this.filteredOperations = filteredOperations;
    }
 
    @Override
@@ -146,6 +157,12 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
             Object secretName = arguments.get("secretName");
             if (secretName != null) {
                step.setSecretName(secretName.toString());
+            }
+         }
+         if (arguments.containsKey("filteredOperations")) {
+            Object filteredOperations = arguments.get("filteredOperations");
+            if (filteredOperations != null && (filteredOperations instanceof List)) {
+               step.setFilteredOperations((List<String>)filteredOperations);
             }
          }
          if (arguments.containsKey("operationsHeaders")) {

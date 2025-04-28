@@ -38,17 +38,19 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    protected final String testEndpoint;
    protected final String runnerType;
    protected final String secretName;
+   protected final String filteredOperations;
    protected final String operationsHeaders;
 
    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
    @DataBoundConstructor
    public MicrocksTester(String server, String serviceId, String testEndpoint, String runnerType, String secretName,
-                         String operationsHeaders, String verbose, String waitTime, String waitUnit) {
+                         String filteredOperations, String operationsHeaders, String verbose, String waitTime, String waitUnit) {
       super(server, verbose, waitTime, waitUnit);
       this.serviceId = serviceId != null ? serviceId.trim() : null;
       this.testEndpoint = testEndpoint != null ? testEndpoint.trim() : null;
       this.runnerType = runnerType != null ? runnerType.trim() : null;
       this.secretName = secretName != null ? secretName.trim() : null;
+      this.filteredOperations = filteredOperations != null ? filteredOperations.trim() : null;
       this.operationsHeaders = operationsHeaders != null ? operationsHeaders.trim() : null;
    }
 
@@ -70,6 +72,38 @@ public class MicrocksTester extends TimedMicrocksBaseStep implements IMicrocksTe
    @Override
    public String getSecretName() {
       return secretName;
+   }
+
+   @Override
+   public List<String> getFilteredOperations() {
+      List<String> results = null;
+
+      if (filteredOperations != null && !filteredOperations.isEmpty()) {
+         // Add some Jackson parsing and mapping here.
+         ObjectMapper mapper = new ObjectMapper();
+
+         try {
+            JsonNode rootNode = mapper.readTree(this.filteredOperations);
+
+            // If we've got an array, that's a good start! Initialize results.
+            if (rootNode.isArray()) {
+               results = new ArrayList<>();
+
+               Iterator<JsonNode> operationNodes = rootNode.elements();
+               while (operationNodes.hasNext()) {
+                  JsonNode operationNode = operationNodes.next();
+
+                  // If we've got a string, add the operation to the list.
+                  if (operationNode.isTextual()) {
+                     results.add(operationNode.textValue());
+                  }
+               }
+            }
+         } catch (Exception e) {
+            System.err.println("Exception while parsing filteredOperations field: " + e.getMessage());
+         }
+      }
+      return results;
    }
 
    @Override

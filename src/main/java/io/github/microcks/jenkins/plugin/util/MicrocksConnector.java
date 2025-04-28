@@ -18,14 +18,20 @@
  */
 package io.github.microcks.jenkins.plugin.util;
 
+import io.github.microcks.jenkins.plugin.model.TestResultSummary;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.microcks.jenkins.plugin.model.TestResultSummary;
-import okhttp3.*;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import javax.net.ssl.SSLSession;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -65,7 +71,7 @@ public class MicrocksConnector {
    }
 
    public String createTestResult(String serviceId, String testEndpoint, String runnerType, String secretName,
-                                  Long timeout, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
+                                  Long timeout,  List<String> filteredOperations, Map<String, List<Map<String, String>>> operationsHeaders) throws IOException {
       // Prepare a Jackson object mapper.
       ObjectMapper mapper = new ObjectMapper();
 
@@ -76,6 +82,9 @@ public class MicrocksConnector {
       builder.append("\"timeout\": ").append(timeout);
       if (secretName != null && !secretName.isEmpty()) {
          builder.append(", \"secretName\": \"").append(secretName).append("\"");
+      }
+      if (filteredOperations != null && !filteredOperations.isEmpty()) {
+         builder.append(", \"filteredOperations\": ").append(mapper.writeValueAsString(filteredOperations));
       }
       if (operationsHeaders != null && !operationsHeaders.isEmpty()) {
          builder.append(", \"operationsHeaders\": ").append(mapper.writeValueAsString(operationsHeaders));

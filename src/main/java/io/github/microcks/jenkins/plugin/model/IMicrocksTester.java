@@ -52,6 +52,8 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
 
    String getSecretName();
 
+   List<String> getFilteredOperations();
+
    Map<String, List<Map<String, String>>> getOperationsHeaders();
 
 
@@ -86,7 +88,7 @@ public interface IMicrocksTester extends ITimedMicrocksPlugin {
       String testResultId = null;
       try {
          testResultId = microcksConnector.createTestResult(getServiceId(), getTestEndpoint(), getRunnerType(),
-               getSecretName(), wait, getOperationsHeaders());
+               getSecretName(), wait, getFilteredOperations(), getOperationsHeaders());
          if (chatty) {
             listener.getLogger().println("\n MicrocksTester got response: " + testResultId);
          }
