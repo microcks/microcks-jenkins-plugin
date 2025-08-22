@@ -1,6 +1,6 @@
 # Microcks Jenkins plugin
 
-Jenkins plugin for easily running tests or import API artifacts in Microks instances.
+Jenkins plugin for easily running tests or importing API artifacts in Microcks instances.
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-jenkins-plugin/build-verify.yml?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-jenkins-plugin/actions)
 [![Version](https://img.shields.io/maven-central/v/io.github.microcks/microcks-jenkins-plugin?color=blue&style=for-the-badge)]((https://search.maven.org/artifact/io.github.microcks/microcks))
@@ -11,7 +11,7 @@ Jenkins plugin for easily running tests or import API artifacts in Microks insta
 
 ## Build Status
 
-Latest released version is `0.6.1`.
+The latest released version is `0.6.1`.
 
 Current development version is `0.6.2-SNAPSHOT`. [![Build Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-jenkins-plugin/build-verify.yml?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-jenkins-plugin/actions)
 
@@ -32,7 +32,7 @@ Current development version is `0.6.2-SNAPSHOT`. [![Build Status](https://img.sh
 * [Microcks Community](https://github.com/microcks/community) and community meeting
 * Join us on [Discord](https://microcks.io/discord-invite/), on [GitHub Discussions](https://github.com/orgs/microcks/discussions) or [CNCF Slack #microcks channel](https://cloud-native.slack.com/archives/C05BYHW1TNJ)
 
-To get involved with our community, please make sure you are familiar with the project's [Code of Conduct](./CODE_OF_CONDUCT.md).
+To get involved with our community, please familiarize yourself with the project's [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## Getting Started
 
